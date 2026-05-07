@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lean González — Editor Short-Form & Marketing Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --bg2: #111114;
+    --bg3: #18181d;
+    --card: #1c1c22;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #00f0a0;
+    --accent2: #0af;
+    --accent-dim: rgba(0,240,160,0.12);
+    --accent2-dim: rgba(0,170,255,0.1);
+    --text: #f0f0f0;
+    --text2: #999;
+    --text3: #666;
+    --white: #fff;
+    --font-head: 'Bebas Neue', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(10,10,12,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    background: var(--accent);
+    color: #000 !important;
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    font-weight: 700 !important;
+  }
+  .nav-cta:hover { background: #00d090 !important; color: #000 !important; }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 7rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(0,240,160,0.25);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.08em;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+  h1 {
+    font-family: var(--font-head);
+    font-size: clamp(3.2rem, 6vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+    color: var(--white);
+  }
+  h1 .accent { color: var(--accent); }
+  h1 .accent2 { color: var(--accent2); }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    max-width: 480px;
+  }
+  .btn-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+  .btn-primary:hover { background: #00d090; transform: translateY(-2px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border2);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--accent2);
+    border: 1px solid rgba(0,170,255,0.25);
+  }
+  .btn-ghost:hover { background: var(--accent2-dim); }
+
+  /* HERO VISUAL */
+  .hero-visual {
+    position: relative;
+  }
+  .hero-card-main {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card-main::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,240,160,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .video-preview {
+    background: var(--bg3);
+    border-radius: 10px;
+    aspect-ratio: 9/16;
+    max-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .video-preview-inner {
+    text-align: center;
+    color: var(--text3);
+  }
+  .play-btn {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .play-btn:hover { transform: scale(1.1); }
+  .play-btn svg { width: 24px; height: 24px; fill: #000; margin-left: 4px; }
+  .video-tag {
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .stats-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .stat-pill {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    text-align: center;
+  }
+  .stat-pill .num {
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+  }
+  .stat-pill .label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  /* GLOW LINES */
+  .hero-glow {
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  /* BG GRID */
+  #hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* SECTION HEADERS */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 0 0 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+  h2 {
+    font-family: var(--font-head);
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: 0.03em;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+  h3 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .section-desc {
+    color: var(--text2);
+    font-size: 1rem;
+    max-width: 520px;
+    line-height: 1.7;
+  }
+
+  /* ABOUT */
+  #about { padding: 6rem 0; }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .about-avatar-wrap {
+    position: relative;
+  }
+  .about-avatar {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 340px;
+    border-radius: 16px;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .about-avatar-inner {
+    font-family: var(--font-head);
+    font-size: 8rem;
+    color: var(--accent);
+    opacity: 0.15;
+    user-select: none;
+    line-height: 1;
+  }
+  .about-initials {
+    position: absolute;
+    font-family: var(--font-head);
+    font-size: 5rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .about-badge {
+    position: absolute;
+    bottom: -12px; right: -12px;
+    background: var(--accent);
+    color: #000;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .about-text p {
+    color: var(--text2);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  .about-text p strong {
+    color: var(--white);
+    font-weight: 600;
+  }
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1.5rem;
+  }
+  .tag {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+  }
+
+  /* SERVICES */
+  #services { padding: 6rem 0; background: var(--bg2); }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+    margin-top: 3rem;
+  }
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .service-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .service-card:hover::before { opacity: 1; }
+  .service-icon {
+    width: 44px; height: 44px;
+    background: var(--accent-dim);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 22px;
+  }
+  .service-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .service-card p { color: var(--text2); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem; }
+  .service-meta { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
+  .service-meta span {
+    font-size: 11px;
+    color: var(--text3);
+    font-family: var(--font-mono);
+  }
+  .service-meta span strong { color: var(--accent2); font-weight: 500; }
+
+  /* PORTFOLIO */
+  #portfolio { padding: 6rem 0; }
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-top: 3rem;
+  }
+  .portfolio-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .portfolio-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-4px);
+  }
+  .portfolio-thumb {
+    aspect-ratio: 16/9;
+    background: var(--bg3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .portfolio-thumb-label {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: rgba(0,0,0,0.7);
+    color: var(--accent);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .portfolio-thumb-icon { font-size: 2.5rem; }
+  .portfolio-body { padding: 1.25rem; }
+  .portfolio-body h3 { margin-bottom: 0.4rem; }
+  .portfolio-body .desc { color: var(--text2); font-size: 0.88rem; margin-bottom: 1rem; }
+  .portfolio-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .chip {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .portfolio-body .btn { font-size: 12px; padding: 0.5rem 1rem; }
+
+  /* CASES */
+  #cases { padding: 6rem 0; background: var(--bg2); }
+  .cases-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .case-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .case-card::after {
+    content: attr(data-num);
+    position: absolute;
+    top: 1.5rem; right: 2rem;
+    font-family: var(--font-head);
+    font-size: 5rem;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .case-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .case-card h3 { font-size: 1.3rem; margin-bottom: 1rem; }
+  .case-row { margin-bottom: 1rem; }
+  .case-row dt {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    font-family: var(--font-mono);
+    margin-bottom: 4px;
+  }
+  .case-row dd { color: var(--text2); font-size: 0.9rem; }
+  .result-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,240,160,0.1);
+    border: 1px solid rgba(0,240,160,0.2);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-top: 0.5rem;
+  }
+
+  /* PROCESS */
+  #process { padding: 6rem 0; }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+    position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    left: calc(12.5% + 1rem);
+    right: calc(12.5% + 1rem);
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0.3;
+  }
+  .step {
+    text-align: center;
+    position: relative;
+    padding: 0 0.5rem;
+  }
+  .step-num {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-head);
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    position: relative;
+    z-index: 1;
+  }
+  .step h3 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .step p { color: var(--text2); font-size: 0.85rem; line-height: 1.6; }
+
+  /* TOOLS */
+  #tools { padding: 5rem 0; background: var(--bg2); }
+  .tools-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    justify-content: center;
+  }
+  .tool-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 1.2rem;
+    transition: border-color 0.2s;
+  }
+  .tool-pill:hover { border-color: var(--accent2); }
+  .tool-pill .ico { font-size: 1.5rem; }
+  .tool-pill span { font-size: 13px; font-weight: 500; color: var(--text2); }
+
+  /* TRUST */
+  #trust { padding: 6rem 0; }
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 3rem;
+  }
+  .trust-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .trust-card::before {
+    content: '"';
+    position: absolute;
+    top: -1rem; left: 1rem;
+    font-family: var(--font-head);
+    font-size: 8rem;
+    color: var(--accent);
+    opacity: 0.07;
+    line-height: 1;
+  }
+  .trust-card p { color: var(--text2); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem; }
+  .trust-card .icon { font-size: 1.5rem; margin-bottom: 0.75rem; display: block; }
+  .trust-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--white); }
+
+  /* CTA */
+  #cta {
+    padding: 6rem 0;
+    background: var(--bg2);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #cta::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,240,160,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #cta h2 { margin-bottom: 1rem; }
+  #cta p { color: var(--text2); margin-bottom: 2.5rem; max-width: 540px; margin-left: auto; margin-right: auto; }
+  #cta .btn-group { justify-content: center; }
+
+  /* CONTACT */
+  #contact { padding: 5rem 0; border-top: 1px solid var(--border); }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .contact-link:hover { color: var(--accent); border-color: var(--border2); background: var(--card); }
+  .contact-link .c-icon { font-size: 1.2rem; width: 20px; }
+  .contact-form-side h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .contact-form-side p { color: var(--text2); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .availability {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,240,160,0.06);
+    border: 1px solid rgba(0,240,160,0.15);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-top: 1.5rem;
+  }
+  .avail-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+  }
+  .availability span { font-size: 13px; color: var(--accent); font-weight: 500; }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text3);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--text3); text-decoration: none; }
+  footer strong { color: var(--accent); }
+
+  /* DIVIDERS */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2) 30%, var(--border2) 70%, transparent);
+    margin: 0;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem; }
+    .nav-links { display: none; }
+    h1 { font-size: 3rem; }
+    .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-visual { display: none; }
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .about-avatar-wrap { max-width: 200px; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .process-steps::before { display: none; }
+    .trust-grid { grid-template-columns: 1fr; }
+    .case-card { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .container { padding: 0 1.25rem; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.25s; }
+  .delay-3 { animation-delay: 0.4s; }
+  .delay-4 { animation-delay: 0.55s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">lean.gz</a>
+  <ul class="nav-links">
+    <li><a href="#about">Sobre mí</a></li>
+    <li><a href="#services">Servicios</a></li>
+    <li><a href="#portfolio">Trabajos</a></li>
+    <li><a href="#process">Proceso</a></li>
+    <li><a href="#contact" class="nav-cta">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="hero-tag fade-up">Disponible para trabajar · Argentina</div>
+        <h1 class="fade-up delay-1">
+          CONVIERTO IDEAS Y MARCAS EN<br>
+          <span class="accent">CONTENIDO CORTO</span><br>
+          QUE CAPTA<br>
+          <span class="accent2">ATENCIÓN.</span>
+        </h1>
+        <p class="hero-sub fade-up delay-2">
+          Editor short-form y estudiante de Marketing Digital. Ayudo a creadores, negocios y marcas a transformar contenido bruto en piezas listas para TikTok, Reels y Shorts.
+        </p>
+        <div class="btn-group fade-up delay-3">
+          <a href="#portfolio" class="btn btn-primary">↓ Ver trabajos</a>
+          <a href="https://wa.me/5400000000000" class="btn btn-secondary">💬 Escribime por WhatsApp</a>
+          <a href="#services" class="btn btn-ghost">Ver servicios</a>
+        </div>
+      </div>
+      <div class="hero-visual fade-up delay-2">
+        <div class="hero-card-main">
+          <div class="video-preview">
+            <div class="video-preview-inner">
+              <div class="play-btn">
+                <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+              </div>
+              <div class="video-tag">REEL · 0:28</div>
+            </div>
+            <span class="portfolio-thumb-label">Short-form edit</span>
+          </div>
+          <div class="stats-row">
+            <div class="stat-pill">
+              <span class="num">+50</span>
+              <div class="label">Proyectos</div>
+            </div>
+            <div class="stat-pill">
+              <span class="num">48h</span>
+              <div class="label">Entrega</div>
+            </div>
+            <div class="stat-pill">
+              <span class="num">100%</span>
+              <div class="label">Compromiso</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-glow"></div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-avatar-wrap">
+        <div class="about-avatar">
+          <span class="about-avatar-inner">LG</span>
+          <span class="about-initials">LG</span>
+        </div>
+        <div class="about-badge">Lean<br>González</div>
+      </div>
+      <div class="about-text">
+        <div class="section-label">Sobre mí</div>
+        <h2>TRABAJO REAL,<br>MENTALIDAD<br>DE CREADOR.</h2>
+        <p>
+          Soy Lean, tengo 20 y pico años y soy de Argentina. Trabajo en atención al cliente desde hace tiempo —eso me enseñó a comunicarme bien, a manejar presión y a entender qué quiere la gente. Nada de teoría: experiencia real.
+        </p>
+        <p>
+          Paralelamente estudio <strong>Licenciatura en Marketing y Comercio Digital</strong>, y edito contenido para TikTok, Reels y Shorts enfocado en fútbol, gaming, streamers y marcas locales. Me interesa el lado creativo del negocio, pero también la parte estratégica.
+        </p>
+        <p>
+          No soy un experto de veinte años de experiencia. Soy alguien que aprende rápido, se toma el trabajo en serio y quiere ayudar a marcas y creadores a crecer online de forma sostenida. Si buscás eso, podemos trabajar.
+        </p>
+        <div class="tags-row">
+          <span class="tag">Short-form edit</span>
+          <span class="tag">Reels & TikTok</span>
+          <span class="tag">Marketing Digital</span>
+          <span class="tag">Atención al cliente</span>
+          <span class="tag">Gaming & Fútbol</span>
+          <span class="tag">Argentina 🇦🇷</span>
+          <span class="tag">Remoto</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="section-label">Servicios</div>
+    <h2>QUÉ PUEDO<br>HACER POR VOS.</h2>
+    <p class="section-desc">Desde edición de contenido hasta soporte comercial remoto. Servicios pensados para creadores, marcas y negocios que quieren moverse en redes.</p>
+    <div class="services-grid">
+
+      <div class="service-card">
+        <div class="service-icon">🎬</div>
+        <h3>Edición de Reels / TikToks / Shorts</h3>
+        <p>Edición de video corto con ritmo, subtítulos animados, efectos y hooks desde el segundo cero. Contenido que para el dedo.</p>
+        <div class="service-meta">
+          <span>✦ <strong>Incluye:</strong> corte, ritmo, transiciones, subtítulos, música</span>
+          <span>✦ <strong>Para:</strong> creadores, marcas, negocios locales</span>
+          <span>✦ <strong>Resultado:</strong> piezas listas para publicar</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">📝</div>
+        <h3>Subtítulos dinámicos</h3>
+        <p>Subtítulos animados al estilo podcast, estilo viral, con colores y timing que refuerzan el mensaje y mejoran la retención.</p>
+        <div class="service-meta">
+          <span>✦ <strong>Incluye:</strong> tipografía, color, animación sincronizada</span>
+          <span>✦ <strong>Para:</strong> podcasters, coaches, entrevistas</span>
+          <span>✦ <strong>Resultado:</strong> mayor retención y accesibilidad</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">🎮</div>
+        <h3>Clips para streamers / gaming</h3>
+        <p>Cuts de los mejores momentos del stream con edición energética, efectos de sound design y overlay. Perfecto para TikTok, YouTube Shorts y clips del canal.</p>
+        <div class="service-meta">
+          <span>✦ <strong>Incluye:</strong> highlight reel, efectos, música</span>
+          <span>✦ <strong>Para:</strong> streamers, gamers, comunidades</span>
+          <span>✦ <strong>Resultado:</strong> más visibilidad y nuevos seguidores</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">🏪</div>
+        <h3>Contenido para negocios locales</h3>
+        <p>Videos promocionales, presentaciones de producto y contenido orgánico para marcas físicas que quieren empezar a vender por redes.</p>
+        <div class="service-meta">
+          <span>✦ <strong>Incluye:</strong> guion, edición, formato para Instagram/TikTok</span>
+          <span>✦ <strong>Para:</strong> restaurantes, marcas de ropa, servicios</span>
+          <span>✦ <strong>Resultado:</strong> mayor alcance y consultas</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">📱</div>
+        <h3>Optimización de perfiles Instagram / TikTok</h3>
+        <p>Revisión y mejora del bio, links, highlights, grilla y tono de comunicación para que el perfil venda antes de que alguien vea un video.</p>
+        <div class="service-meta">
+          <span>✦ <strong>Incluye:</strong> auditoría, propuesta y ajustes</span>
+          <span>✦ <strong>Para:</strong> creadores y marcas que empiezan o reinician</span>
+          <span>✦ <strong>Resultado:</strong> perfil que convierte visitas en seguidores</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">📞</div>
+        <h3>Atención al cliente / soporte remoto</h3>
+        <p>Gestión de mensajes, respuesta a consultas, resolución de problemas y seguimiento de clientes. Con criterio comercial y buena comunicación.</p>
+        <div class="service-meta">
+          <span>✦ <strong>Incluye:</strong> DMs, correo, WhatsApp Business</span>
+          <span>✦ <strong>Para:</strong> tiendas online, agencias, negocios</span>
+          <span>✦ <strong>Resultado:</strong> menos tiempo perdido, más clientes retenidos</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">📊</div>
+        <h3>Asistencia de marketing digital</h3>
+        <p>Apoyo en tareas de marketing: programación de posts, investigación de tendencias, reportes básicos, copywriting y gestión de calendarios.</p>
+        <div class="service-meta">
+          <span>✦ <strong>Incluye:</strong> planificación, ejecución, reportes</span>
+          <span>✦ <strong>Para:</strong> agencias, marcas con poco personal</span>
+          <span>✦ <strong>Resultado:</strong> más capacidad operativa sin más costo fijo</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="container">
+    <div class="section-label">Portfolio</div>
+    <h2>PROYECTOS<br>Y TRABAJOS.</h2>
+    <p class="section-desc">Muestra de ediciones, proyectos demo y piezas de práctica. El portfolio está en construcción activa.</p>
+    <div class="portfolio-grid">
+
+      <div class="portfolio-card">
+        <div class="portfolio-thumb" style="background: linear-gradient(135deg, #0a0a0c, #1a1a2e);">
+          <span class="portfolio-thumb-label">DEMO · Fútbol</span>
+          <span class="portfolio-thumb-icon">⚽</span>
+        </div>
+        <div class="portfolio-body">
+          <h3>Edit de fútbol estilo viral</h3>
+          <p class="desc">Compilado de jugadas y goles con edición energética, slow motion y música épica para redes sociales.</p>
+          <div class="portfolio-meta">
+            <span class="chip">CapCut</span>
+            <span class="chip">Subtítulos</span>
+            <span class="chip">Reels</span>
+          </div>
+          <a href="#contact" class="btn btn-secondary">Ver proyecto →</a>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-thumb" style="background: linear-gradient(135deg, #0a0a12, #001a0a);">
+          <span class="portfolio-thumb-label">DEMO · Gaming</span>
+          <span class="portfolio-thumb-icon">🎮</span>
+        </div>
+        <div class="portfolio-body">
+          <h3>Clip de streamer / gaming</h3>
+          <p class="desc">Highlights del stream con cortes rápidos, efectos de sonido y overlays. Formato TikTok/Shorts.</p>
+          <div class="portfolio-meta">
+            <span class="chip">CapCut</span>
+            <span class="chip">Sound FX</span>
+            <span class="chip">TikTok</span>
+          </div>
+          <a href="#contact" class="btn btn-secondary">Ver proyecto →</a>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-thumb" style="background: linear-gradient(135deg, #1a0500, #2a1000);">
+          <span class="portfolio-thumb-label">DEMO · Negocio local</span>
+          <span class="portfolio-thumb-icon">🍔</span>
+        </div>
+        <div class="portfolio-body">
+          <h3>Promo para hamburguesería</h3>
+          <p class="desc">Video de producto con texto dinámico, precio y CTA para publicar en Instagram y TikTok.</p>
+          <div class="portfolio-meta">
+            <span class="chip">CapCut</span>
+            <span class="chip">Canva</span>
+            <span class="chip">Instagram</span>
+          </div>
+          <a href="#contact" class="btn btn-secondary">Ver proyecto →</a>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-thumb" style="background: linear-gradient(135deg, #0a0a1a, #001a1a);">
+          <span class="portfolio-thumb-label">DEMO · Marca local</span>
+          <span class="portfolio-thumb-icon">👗</span>
+        </div>
+        <div class="portfolio-body">
+          <h3>Reel para marca de ropa local</h3>
+          <p class="desc">Video de presentación de temporada con transiciones en ritmo musical y texto de marca.</p>
+          <div class="portfolio-meta">
+            <span class="chip">CapCut</span>
+            <span class="chip">Canva</span>
+            <span class="chip">Reels</span>
+          </div>
+          <a href="#contact" class="btn btn-secondary">Ver proyecto →</a>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-thumb" style="background: linear-gradient(135deg, #0a1a0a, #001500);">
+          <span class="portfolio-thumb-label">DEMO · Perfil</span>
+          <span class="portfolio-thumb-icon">📱</span>
+        </div>
+        <div class="portfolio-body">
+          <h3>Optimización de perfil Instagram</h3>
+          <p class="desc">Rediseño de bio, highlights y grilla. Propuesta visual y de copy para una tienda de indumentaria.</p>
+          <div class="portfolio-meta">
+            <span class="chip">Canva</span>
+            <span class="chip">Copywriting</span>
+            <span class="chip">Instagram</span>
+          </div>
+          <a href="#contact" class="btn btn-secondary">Ver proyecto →</a>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-thumb" style="background: linear-gradient(135deg, #1a1500, #0a0a00);">
+          <span class="portfolio-thumb-label">DEMO · Podcast</span>
+          <span class="portfolio-thumb-icon">🎙️</span>
+        </div>
+        <div class="portfolio-body">
+          <h3>Subtítulos animados para podcast</h3>
+          <p class="desc">Fragmento de podcast convertido en clip vertical con subtítulos dinámicos estilo Iman Gadzhi.</p>
+          <div class="portfolio-meta">
+            <span class="chip">CapCut</span>
+            <span class="chip">Subtítulos</span>
+            <span class="chip">Shorts</span>
+          </div>
+          <a href="#contact" class="btn btn-secondary">Ver proyecto →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CASES -->
+<section id="cases">
+  <div class="container">
+    <div class="section-label">Casos de estudio</div>
+    <h2>CÓMO PIENSO<br>LOS PROYECTOS.</h2>
+    <p class="section-desc">Tres escenarios prototipo para mostrar cómo abordo un proyecto de principio a fin.</p>
+    <div class="cases-list">
+
+      <div class="case-card" data-num="01">
+        <div>
+          <div class="case-label">Caso 01 · Creador de fútbol</div>
+          <h3>De 200 a 5K seguidores en TikTok</h3>
+          <dl>
+            <div class="case-row">
+              <dt>Problema</dt>
+              <dd>Creador con buenas jugadas pero ediciones planas, sin ritmo ni hooks. El contenido no retenía.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Solución aplicada</dt>
+              <dd>Edición con corte en los 2 primeros segundos para captar atención. Subtítulos grandes, música épica sincronizada, formato 9:16 optimizado.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Piezas creadas</dt>
+              <dd>6 clips semanales: 3 highlights, 2 compilados y 1 "best of" mensual.</dd>
+            </div>
+          </dl>
+        </div>
+        <div>
+          <dl>
+            <div class="case-row">
+              <dt>Estrategia</dt>
+              <dd>Publicación consistente 5 veces por semana, aprovechando tendencias y audios virales. A/B test de thumbnails en los primeros frames.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Herramientas</dt>
+              <dd>CapCut, ChatGPT para captions, Google Drive para organización del material.</dd>
+            </div>
+          </dl>
+          <span class="result-pill">📈 De 200 a +5.000 seguidores en 60 días</span>
+        </div>
+      </div>
+
+      <div class="case-card" data-num="02">
+        <div>
+          <div class="case-label">Caso 02 · Hamburguesería local</div>
+          <h3>Primer mes en redes, primeras ventas digitales</h3>
+          <dl>
+            <div class="case-row">
+              <dt>Problema</dt>
+              <dd>Negocio físico sin presencia digital. Sin contenido, sin seguidores, sin estrategia.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Solución aplicada</dt>
+              <dd>Arranque desde cero: identidad visual básica, perfil optimizado, primeras 12 piezas de contenido planificadas.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Piezas creadas</dt>
+              <dd>3 reels de producto, 4 stories semanales, 1 video de "detrás de escena" y plantillas para Instagram.</dd>
+            </div>
+          </dl>
+        </div>
+        <div>
+          <dl>
+            <div class="case-row">
+              <dt>Estrategia</dt>
+              <dd>Contenido de producto + storytelling del negocio + CTA directo a WhatsApp Business para pedidos.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Herramientas</dt>
+              <dd>CapCut, Canva, Meta Business Suite, WhatsApp Business.</dd>
+            </div>
+          </dl>
+          <span class="result-pill">💬 +40 consultas via WhatsApp en el primer mes</span>
+        </div>
+      </div>
+
+      <div class="case-card" data-num="03">
+        <div>
+          <div class="case-label">Caso 03 · Streamer de gaming</div>
+          <h3>Clips que llevan tráfico al canal de Twitch</h3>
+          <dl>
+            <div class="case-row">
+              <dt>Problema</dt>
+              <dd>Streamer con buen contenido en vivo pero sin presencia en redes cortas. Nadie sabía que existía.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Solución aplicada</dt>
+              <dd>Estrategia de "clips como top of funnel": los mejores momentos del stream editados para TikTok y Shorts, con hook, cut y CTA al final.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Piezas creadas</dt>
+              <dd>10 clips mensuales: highlights, fails graciosos y momentos épicos seleccionados con criterio.</dd>
+            </div>
+          </dl>
+        </div>
+        <div>
+          <dl>
+            <div class="case-row">
+              <dt>Estrategia</dt>
+              <dd>Publicación en las 2 horas post-stream. Títulos optimizados con keywords. Comentario anclado con link al canal.</dd>
+            </div>
+            <div class="case-row">
+              <dt>Herramientas</dt>
+              <dd>CapCut, OBS para capturas, Notion para calendario de contenido.</dd>
+            </div>
+          </dl>
+          <span class="result-pill">🎮 +300 seguidores nuevos en Twitch en 45 días</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="container">
+    <div class="section-label">Proceso de trabajo</div>
+    <h2>ASÍ TRABAJO,<br>PASO A PASO.</h2>
+    <p class="section-desc">Simple, claro y sin vueltas. Cuatro pasos desde que me mandás el material hasta que el video está listo para publicar.</p>
+    <div class="process-steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Me enviás el material</h3>
+        <p>Video crudo, clips, fotos o links. Me contás de qué trata el proyecto y qué estilo te gusta.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Definimos objetivo y estilo</h3>
+        <p>Hablamos qué queremos lograr, para qué plataforma es y qué referencias visuales te gustan.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Edito y entrego la primera versión</h3>
+        <p>En 24-48hs tenés la primera versión para revisar. Entrega por Drive o el canal que uses.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Ajustamos y dejamos listo</h3>
+        <p>Hacemos los ajustes que necesites y el video queda listo para subir directamente a la plataforma.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="container" style="text-align: center;">
+    <div class="section-label" style="justify-content: center;">Herramientas</div>
+    <h2>CON ESTO<br>TRABAJO.</h2>
+    <div class="tools-grid">
+      <div class="tool-pill"><span class="ico">✂️</span><span>CapCut</span></div>
+      <div class="tool-pill"><span class="ico">🎨</span><span>Canva</span></div>
+      <div class="tool-pill"><span class="ico">🤖</span><span>ChatGPT</span></div>
+      <div class="tool-pill"><span class="ico">📓</span><span>Notion</span></div>
+      <div class="tool-pill"><span class="ico">📁</span><span>Google Drive</span></div>
+      <div class="tool-pill"><span class="ico">🎵</span><span>TikTok</span></div>
+      <div class="tool-pill"><span class="ico">📸</span><span>Instagram</span></div>
+      <div class="tool-pill"><span class="ico">▶️</span><span>YouTube Shorts</span></div>
+      <div class="tool-pill"><span class="ico">📊</span><span>Meta Business Suite</span></div>
+      <div class="tool-pill"><span class="ico">💬</span><span>WhatsApp Business</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- TRUST -->
+<section id="trust">
+  <div class="container">
+    <div class="section-label">Por qué trabajar conmigo</div>
+    <h2>LO QUE ME<br>DIFERENCIA.</h2>
+    <div class="trust-grid">
+      <div class="trust-card">
+        <span class="icon">🤝</span>
+        <p>Vengo del mundo real del trabajo. Años de atención al cliente me enseñaron a comunicarme claro, manejar presión y resolver problemas sin drama.</p>
+        <h4>Criterio comercial de verdad</h4>
+      </div>
+      <div class="trust-card">
+        <span class="icon">⏰</span>
+        <p>Si acordamos una entrega para el martes, el martes está. No invento excusas. Si hay un problema, te aviso antes, no después.</p>
+        <h4>Cumplimiento sin excusas</h4>
+      </div>
+      <div class="trust-card">
+        <span class="icon">📚</span>
+        <p>Estudio marketing y me actualizo constantemente. No te voy a vender humo: lo que aplico lo entiendo y lo ejecuto con contexto.</p>
+        <h4>Formación + ejecución</h4>
+      </div>
+      <div class="trust-card">
+        <span class="icon">💬</span>
+        <p>Soy claro con los tiempos, el proceso y lo que puedo hacer. Nada de promesas imposibles. Si algo no está en mis capacidades actuales, te lo digo.</p>
+        <h4>Comunicación directa y honesta</h4>
+      </div>
+      <div class="trust-card">
+        <span class="icon">🔥</span>
+        <p>Estoy en el comienzo de mi carrera y lo sé. Eso significa que voy a dar el 110% en cada proyecto porque cada trabajo construye mi reputación.</p>
+        <h4>Hambre de crecer</h4>
+      </div>
+      <div class="trust-card">
+        <span class="icon">📱</span>
+        <p>Consumo contenido de creadores top y marcas digitales todos los días. Sé qué funciona ahora, no lo que funcionaba hace dos años.</p>
+        <h4>Actualizado en tendencias</h4>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="section-label" style="justify-content: center;">¿Arrancamos?</div>
+    <h2>¿TENÉS CONTENIDO<br>SIN EDITAR O UNA MARCA<br>QUE NECESITA<br>MOVERSE EN REDES?</h2>
+    <p>Hablemos. Sin costo, sin compromiso. Contame el proyecto y vemos cómo puedo ayudarte.</p>
+    <div class="btn-group">
+      <a href="https://wa.me/5400000000000" class="btn btn-primary">💬 Escribime por WhatsApp</a>
+      <a href="mailto:lean@email.com" class="btn btn-secondary">📧 Mandame un email</a>
+      <a href="#portfolio" class="btn btn-ghost">Ver mis trabajos</a>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div>
+        <div class="section-label">Contacto</div>
+        <h2>ENCONTRÁ<br>MI TRABAJO.</h2>
+        <div class="contact-links">
+          <a href="https://wa.me/5400000000000" class="contact-link">
+            <span class="c-icon">💬</span>
+            <div>
+              <strong>WhatsApp</strong><br>
+              <span style="font-size:12px; color: var(--text3);">+54 (tu número)</span>
+            </div>
+          </a>
+          <a href="mailto:lean@email.com" class="contact-link">
+            <span class="c-icon">📧</span>
+            <div>
+              <strong>Email</strong><br>
+              <span style="font-size:12px; color: var(--text3);">lean@email.com</span>
+            </div>
+          </a>
+          <a href="https://tiktok.com/@lean.gz" class="contact-link">
+            <span class="c-icon">🎵</span>
+            <div>
+              <strong>TikTok</strong><br>
+              <span style="font-size:12px; color: var(--text3);">@lean.gz</span>
+            </div>
+          </a>
+          <a href="https://instagram.com/lean.gz" class="contact-link">
+            <span class="c-icon">📸</span>
+            <div>
+              <strong>Instagram</strong><br>
+              <span style="font-size:12px; color: var(--text3);">@lean.gz</span>
+            </div>
+          </a>
+          <a href="https://linkedin.com/in/leangonzalez" class="contact-link">
+            <span class="c-icon">💼</span>
+            <div>
+              <strong>LinkedIn</strong><br>
+              <span style="font-size:12px; color: var(--text3);">Lean González</span>
+            </div>
+          </a>
+          <div class="contact-link" style="cursor: default;">
+            <span class="c-icon">📍</span>
+            <div>
+              <strong>Ubicación</strong><br>
+              <span style="font-size:12px; color: var(--text3);">Argentina · Disponible remoto a cualquier zona horaria</span>
+            </div>
+          </div>
+        </div>
+        <div class="availability">
+          <div class="avail-dot"></div>
+          <span>Disponible para nuevos proyectos</span>
+        </div>
+      </div>
+      <div class="contact-form-side">
+        <h3>¿Preferís escribirme directamente?</h3>
+        <p>El canal más rápido para hablar es WhatsApp. También podés mandarme un email con el detalle de tu proyecto y te respondo en menos de 24 horas.</p>
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+          <a href="https://wa.me/5400000000000" class="btn btn-primary" style="justify-content: center; text-align: center;">
+            💬 Escribir por WhatsApp
+          </a>
+          <a href="mailto:lean@email.com" class="btn btn-secondary" style="justify-content: center; text-align: center;">
+            📧 Enviar un email
+          </a>
+        </div>
+        <div style="margin-top: 2rem; padding: 1.25rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px;">
+          <p style="font-size: 0.85rem; color: var(--text2); margin: 0;">
+            <strong style="color: var(--white);">¿Cómo arranco?</strong><br>
+            Contame qué contenido tenés, para qué plataforma es y qué resultado buscás. Con eso ya tengo suficiente para decirte si puedo ayudarte y cómo.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Diseñado y construido por <strong>Lean González</strong> · Argentina 🇦🇷 · <a href="mailto:lean@email.com">lean@email.com</a></p>
+  <p style="margin-top: 0.5rem;">Editor short-form · Marketing Digital · Disponible remoto</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.service-card, .portfolio-card, .trust-card, .case-card, .step, .tool-pill').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
